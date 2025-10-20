@@ -18,7 +18,7 @@ import {
   Globe,
 } from "lucide-react";
 
-import Section from "@/components/Section";
+import Section from "@/components/UI/Section";
 import TechTag from "@/components/TechTag";
 import { THEMES, type ThemeKey } from "@/types/portfolio-theme";
 import { ContactSchema, type ContactPayload } from "@/types/contact";
