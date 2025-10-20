@@ -86,29 +86,6 @@ export default function OverlayNotice({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [open]);
 
-  // Auto-dismiss timer
-  React.useEffect(() => {
-    if (!visible || durationMs <= 0) return;
-    const t = setTimeout(handleClose, durationMs);
-    return () => clearTimeout(t);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [visible, durationMs]);
-
-  // Focus CTA on show
-  React.useEffect(() => {
-    if (!visible) return;
-    const id = requestAnimationFrame(() => buttonRef.current?.focus());
-    return () => cancelAnimationFrame(id);
-  }, [visible]);
-
-  // ESC to close
-  React.useEffect(() => {
-    if (!visible) return;
-    const onKey = (e: KeyboardEvent) => e.key === "Escape" && handleClose();
-    window.addEventListener("keydown", onKey, { passive: true });
-    return () => window.removeEventListener("keydown", onKey);
-  }, [visible]);
-
   const prefersReduced = usePrefersReducedMotion();
   const doAnimate = !reduceMotion && !prefersReduced;
 
@@ -125,6 +102,29 @@ export default function OverlayNotice({
     setVisible(false);
     onClose?.();
   }, [remKey, remStorage, remTtl, onClose]);
+
+  // Auto-dismiss timer
+  React.useEffect(() => {
+    if (!visible || durationMs <= 0) return;
+    const t = setTimeout(handleClose, durationMs);
+    return () => clearTimeout(t);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [visible, durationMs, handleClose]);
+
+  // Focus CTA on show
+  React.useEffect(() => {
+    if (!visible) return;
+    const id = requestAnimationFrame(() => buttonRef.current?.focus());
+    return () => cancelAnimationFrame(id);
+  }, [visible]);
+
+  // ESC to close
+  React.useEffect(() => {
+    if (!visible) return;
+    const onKey = (e: KeyboardEvent) => e.key === "Escape" && handleClose();
+    window.addEventListener("keydown", onKey, { passive: true });
+    return () => window.removeEventListener("keydown", onKey);
+  }, [visible, handleClose]);
 
   return (
     <AnimatePresence>
