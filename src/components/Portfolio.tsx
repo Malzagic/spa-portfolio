@@ -23,7 +23,7 @@ import Section from "@/components/UI/Section";
 import TechTag from "@/components/TechTag";
 import { THEMES, type ThemeKey } from "@/types/portfolio-theme";
 import { ContactSchema, type ContactPayload } from "@/types/contact";
-import { BRAND_NAME, LOCATION } from "@/constant/constants";
+import { BRAND_NAME } from "@/constant/constants";
 
 const fade: MotionProps = {
   initial: { opacity: 0, y: 8 },
@@ -357,11 +357,7 @@ export default function Portfolio() {
             <a className={`inline-flex items-center gap-2 ${T.link}`} href="mailto:hello@pmdev.ovh">
               <Mail className="h-4 w-4" /> devpmme@gmail.com
             </a>
-            <div className="opacity-80 text-sm">
-              Lokalizacja: {LOCATION._FIRST} ({LOCATION._FIRST_SHORT}), {LOCATION._SECOND} ({LOCATION._SECOND_SHORT}),
-              <br />
-              {LOCATION._OTHER} ({LOCATION._OTHER_SHORT})
-            </div>
+            <div className="opacity-80 text-sm">Lokalizacja: Polska (PL) / Remote (EU)</div>
             <div className="flex gap-3">
               <a
                 className={`inline-flex items-center gap-2 ${T.link}`}

@@ -108,7 +108,6 @@ export default function OverlayNotice({
     if (!visible || durationMs <= 0) return;
     const t = setTimeout(handleClose, durationMs);
     return () => clearTimeout(t);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [visible, durationMs, handleClose]);
 
   // Focus CTA on show
