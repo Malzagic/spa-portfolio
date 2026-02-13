@@ -6,16 +6,17 @@ import { motion, easeOut, type MotionProps } from "framer-motion";
 import {
   Code2,
   Rocket,
-  Cpu,
-  Server,
-  PenTool,
-  Terminal,
   Boxes,
   CheckCircle2,
   Github,
   Linkedin,
   Mail,
   Globe,
+  FileSpreadsheet,
+  FileText,
+  Bell,
+  Bot,
+  Zap,
 } from "lucide-react";
 
 import Section from "@/components/UI/Section";
@@ -152,24 +153,23 @@ export default function Portfolio() {
               <Globe className="h-3.5 w-3.5" />
               <span>PL / EN · Remote · EU</span>
             </div>
-            <h1 className="text-3xl md:text-5xl font-semibold leading-tight tracking-tight">
-              Custom software & strony <span className={T.accentText}>bez CMS</span>.
+            <h1 className="text-3xl md:text-5xl font-semibold leading-tight tracking-tight max-w-2xl">
+              Automatyzacja <span className={T.accentText}>Google Workspace</span> dla Twojej firmy.
             </h1>
             <p className="mt-4 md:mt-6 opacity-80 max-w-xl">
-              Buduję aplikacje web i desktop w JS/TS (React, Next.js, Node, Electron). Zero szablonów — 100% dopasowania
-              pod Twój proces.
+              Zamieniam chaos w Arkuszach Google w działające systemy CRM, generatory dokumentów i raporty. Oszczędzaj
+              godziny pracy tygodniowo dzięki dedykowanym skryptom.
             </p>
             <div className="mt-6 flex flex-wrap gap-2">
               {[
+                "Google Apps Script",
+                "Google Sheets",
+                "AppSheet",
                 "JavaScript",
                 "TypeScript",
-                "React",
-                "Next.js",
                 "Node.js",
-                "Electron",
-                "Express",
-                "SQLite",
-                "MongoDB",
+                "Make.com",
+                "Google Cloud",
               ].map(t => (
                 <TechTag key={t} label={t} />
               ))}
@@ -179,13 +179,13 @@ export default function Portfolio() {
                 href="#contact"
                 className={`inline-flex items-center gap-2 rounded-2xl px-5 py-3 font-medium ${T.accentGrad} text-white hover:opacity-95 transition ${T.soft}`}
               >
-                <Rocket className="h-4 w-4" /> Zacznijmy projekt
+                <Rocket className="h-4 w-4" /> Darmowa konsultacja
               </a>
               <a
                 href="#projects"
                 className={`inline-flex items-center gap-2 rounded-2xl px-5 py-3 font-medium ${T.card} hover:opacity-90 transition`}
               >
-                <Code2 className="h-4 w-4" /> Zobacz realizacje
+                <Boxes className="h-4 w-4" /> Przykłady wdrożeń
               </a>
             </div>
           </motion.div>
@@ -194,24 +194,24 @@ export default function Portfolio() {
           <motion.div {...fade} className={`rounded-3xl p-6 md:p-8 ${T.card}`}>
             <div className="grid grid-cols-2 gap-4">
               <Feature
-                icon={<PenTool className="h-5 w-5" />}
-                title="UX/SEO-ready"
-                desc="SSR/SSG, PWA, a11y. Szybkie i przyjazne dla Google."
+                icon={<Zap className="h-5 w-5" />}
+                title="Oszczędność czasu"
+                desc="Automatyzacja nudnych zadań. Skrypty pracują za Ciebie 24/7."
               />
               <Feature
-                icon={<Server className="h-5 w-5" />}
-                title="API & Integracje"
-                desc="Express/Node, REST/JSON, SQL/NoSQL. Stabilne backendy."
+                icon={<FileSpreadsheet className="h-5 w-5" />}
+                title="Moc Arkuszy"
+                desc="Google Sheets jako baza danych. Znane środowisko, nowe możliwości."
               />
               <Feature
-                icon={<Cpu className="h-5 w-5" />}
-                title="Desktop (Electron)"
-                desc="Narzędzia serwisowe, offline-first, kiosk-mode."
+                icon={<Bot className="h-5 w-5" />}
+                title="Powiadomienia"
+                desc="SMS i e-mail o zdarzeniach. Raporty prosto na telefon."
               />
               <Feature
-                icon={<Terminal className="h-5 w-5" />}
-                title="Bez CMS"
-                desc="Zero balastu wtyczek. Pełna kontrola kodu."
+                icon={<Code2 className="h-5 w-5" />}
+                title="Szyte na miarę"
+                desc="Rozwiązania dopasowane w 100% do Twojego procesu biznesowego."
               />
             </div>
           </motion.div>
@@ -222,23 +222,23 @@ export default function Portfolio() {
       <Section
         id="services"
         title="Usługi"
-        subtitle="Projektuję i buduję dopasowane rozwiązania — od warstwy UI po backend i wdrożenie."
+        subtitle="Pomagam małym i średnim firmom wejść na wyższy poziom efektywności dzięki ekosystemowi Google."
       >
         <div className="grid md:grid-cols-3 gap-6">
           <ServiceCard
-            icon={<Code2 />}
-            title="Aplikacje Web (Next.js)"
-            points={["SSR/SSG · PWA", "Tailwind · Framer Motion", "Szybkość, SEO i dostępność"]}
+            icon={<FileSpreadsheet />}
+            title="Automatyzacja Google Sheets"
+            points={["Customowe funkcje i skrypty", "Walidacja danych i formularze", "Dashbordy i raporty"]}
           />
           <ServiceCard
-            icon={<Server />}
-            title="Panele i API (Node)"
-            points={["Express · REST/JSON", "SQL/SQLite/Mongo", "Auth, rate-limit, logging"]}
+            icon={<FileText />}
+            title="Obieg Dokumentów"
+            points={["Generowanie umów/faktur (PDF)", "Szablony w Google Docs", "Wysyłka e-mail z załącznikami"]}
           />
           <ServiceCard
-            icon={<Cpu />}
-            title="Aplikacje Desktop (Electron)"
-            points={["Offline-first", "Integracje z systemem", "Dystrybucja i auto-update"]}
+            icon={<Bell />}
+            title="Integracje i Alerty"
+            points={["Powiadomienia SMS/Telegram", "Łączenie z zewnętrznym API", "Cykliczne raporty sprzedaży"]}
           />
         </div>
       </Section>
@@ -246,50 +246,46 @@ export default function Portfolio() {
       {/* PROJECTS */}
       <Section
         id="projects"
-        title="Wybrane realizacje"
-        subtitle="Kilka projektów pokazujących podejście problem → rozwiązanie → wynik."
+        title="Przykładowe wdrożenia"
+        subtitle="Zobacz, jak automatyzacja rozwiązuje realne problemy biznesowe."
       >
         <div className="grid md:grid-cols-3 gap-6">
           <ProjectCard
-            title="Panel PML (Admin)"
-            stack={["React", "TypeScript", "Node", "SQLite", "JWT"]}
-            problem="Customowy panel blog + REST API bez CMS."
-            solution="UI z Tailwind, autoryzacja przez HttpOnly cookie, API w Express."
-            result="Szybki edytor treści, przewidywalne wdrożenia."
+            title="CRM w Arkuszu Google"
+            stack={["Google Forms", "Apps Script", "Calendar API"]}
+            problem="Ręczne przepisywanie zapytań ze strony do kalendarza."
+            solution="Formularz na stronie -> Automatyczny wpis w Sheets -> E-mail do klienta + Event w Kalendarzu."
+            result="Oszczędność 5h tygodniowo, zero zgubionych leadów."
             href="#"
           />
           <ProjectCard
-            title="Electron Microscope Tool"
-            stack={["Electron", "React", "Vite"]}
-            problem="Aplikacja desktop do pracy z kamerą mikroskopu."
-            solution="Okno główne + tryb kiosk, nagrywanie i snapshoty."
-            result="Płynna praca offline, auto-update."
+            title="Generator Dokumentów"
+            stack={["Google Docs", "Drive API", "PDF"]}
+            problem="Czasochłonne tworzenie umów i faktur dla klientów."
+            solution="Skrypt pobiera dane z Arkusza -> Wypełnia szablon Docs -> Generuje PDF -> Wysyła mailem."
+            result="Dokument gotowy w 3 sekundy zamiast 15 minut."
             href="#"
           />
           <ProjectCard
-            title="OCR Utility Mobile"
-            stack={["React", "OCR", "PWA"]}
-            problem="Skan tabel z telefonu w warunkach serwisowych."
-            solution="PWA + PaddleOCR, kolejka zadań, eksport CSV."
-            result="Szybszy obieg danych, mniej błędów ręcznych."
+            title="Raporty & Powiadomienia"
+            stack={["Twilio API", "Telegram Bot", "Triggers"]}
+            problem="Brak bieżącej wiedzy o wynikach sprzedaży i wizytach."
+            solution="Codzienny raport SMS o 20:00 z podsumowaniem dnia + przypomnienia o wizytach dla klientów."
+            result="Pełna kontrola nad biznesem z poziomu telefonu."
             href="#"
           />
         </div>
       </Section>
 
       {/* PROCESS */}
-      <Section
-        id="process"
-        title="Jak pracuję"
-        subtitle="Małe sprinty, częste dema, czysty kod i transparentny GitHub."
-      >
+      <Section id="process" title="Jak pracuję" subtitle="Prosty proces wdrożenia automatyzacji w Twojej firmie.">
         <ol className="grid md:grid-cols-5 gap-6">
           {[
-            { n: 1, t: "Brief", d: "Zbieram cele, zakres i ryzyka." },
-            { n: 2, t: "Warsztat", d: "1–2h z makietą low-fi i priorytetami." },
-            { n: 3, t: "Implementacja", d: "CI/CD, code review, testy i build." },
-            { n: 4, t: "Wdrożenie", d: "Monitoring, logi, analityka, SEO." },
-            { n: 5, t: "Wsparcie", d: "Plan utrzymania i roadmapa." },
+            { n: 1, t: "Analiza", d: "Rozmawiamy o tym, co zabiera Ci najwięcej czasu." },
+            { n: 2, t: "Plan", d: "Proponuję rozwiązanie oparte o narzędzia, które już znasz." },
+            { n: 3, t: "Skryptowanie", d: "Piszę kod łączący Twoje Arkusze, Maile i Dokumenty." },
+            { n: 4, t: "Wdrożenie", d: "Instaluję rozwiązanie i szkolę z obsługi." },
+            { n: 5, t: "Opieka", d: "Gwarancja działania i ewentualny rozwój." },
           ].map(s => (
             <li key={s.n} className={`rounded-2xl p-5 ${T.card}`}>
               <div className="flex items-center gap-2 mb-2">
@@ -310,42 +306,43 @@ export default function Portfolio() {
       <Section
         id="about"
         title="O mnie"
-        subtitle="Full-stack JS/TS · React/Next.js · Node/Electron. Zaplecze serwisowo-sprzętowe pomaga rozumieć realne ograniczenia środowiska."
+        subtitle="Programista Google Workspace & Full-stack Developer. Łączę świat kodu ze światem biznesu."
       >
         <div className={`rounded-3xl p-6 md:p-8 ${T.card}`}>
           <div className="grid md:grid-cols-3 gap-8">
             <div className="md:col-span-2">
               <p className="opacity-90">
-                Pracuję w PL/DK, prowadzę projekty zdalnie dla małych firm i twórców. Stawiam na wydajność, czytelny kod
-                i przewidywalne dostarczanie. Preferuję rozwiązania bez-CMS — kod źródłowy zawsze zostaje u Ciebie.
+                Specjalizuję się w automatyzacji procesów dla małych i średnich firm. Zamiast drogich i skomplikowanych
+                systemów CRM, buduję lekkie, szyte na miarę narzędzia w oparciu o Google Workspace (Arkusze, Docs,
+                Gmail). Moje rozwiązania działają w tle, oszczędzając Twój czas, podczas gdy Ty zajmujesz się rozwojem
+                biznesu.
               </p>
               <div className="flex flex-wrap gap-2 mt-4">
-                {["Perf & SEO", "Accessibility", "Security", "Observability", "CI/CD"].map(t => (
-                  <TechTag key={t} label={t} />
-                ))}
+                {["Google Apps Script", "Business Automation", "API Integrations", "Data Processing", "Node.js"].map(
+                  t => (
+                    <TechTag key={t} label={t} />
+                  ),
+                )}
               </div>
             </div>
             <div>
               <div className="space-y-2 text-sm">
                 <p>
                   <CheckCircle2 className="inline h-4 w-4 mr-2" />
-                  Umowa + przeniesienie praw
+                  Faktura B2B
                 </p>
                 <p>
                   <CheckCircle2 className="inline h-4 w-4 mr-2" />
-                  Repozytorium GitHub + PR-y
+                  Gwarancja na kod
                 </p>
                 <p>
                   <CheckCircle2 className="inline h-4 w-4 mr-2" />
-                  Stała komunikacja i dema
+                  Szybki czas realizacji
                 </p>
               </div>
               <div className="mt-4 flex gap-2">
                 <a href="/cv.pdf" className={`text-sm underline ${T.link}`}>
                   Zobacz CV (PDF)
-                </a>
-                <a href="#projects" className={`text-sm underline ${T.link}`}>
-                  Repozytoria
                 </a>
               </div>
             </div>
@@ -354,7 +351,7 @@ export default function Portfolio() {
       </Section>
 
       {/* CONTACT */}
-      <Section id="contact" title="Kontakt" subtitle="Opowiedz o projekcie — wrócę z planem w 48 godzin.">
+      <Section id="contact" title="Kontakt" subtitle="Napisz, co chcesz zautomatyzować — wrócę z pomysłem w 48h.">
         <div className={`rounded-3xl p-6 md:p-8 grid md:grid-cols-3 gap-8 ${T.card}`}>
           <div className="space-y-4">
             <a className={`inline-flex items-center gap-2 ${T.link}`} href="mailto:hello@pmdev.ovh">
@@ -434,7 +431,7 @@ export default function Portfolio() {
                 className={`w-full px-4 py-3 rounded-xl bg-transparent border focus:outline-none focus:ring ${T.ring} ${
                   errors.message ? "border-red-500" : ""
                 }`}
-                placeholder="Opisz krótko projekt (cele, budżet, termin)"
+                placeholder="Opisz krótko proces, który chcesz usprawnić (np. 'chcę automatycznie wysyłać faktury z arkusza')"
               />
               {errors.message && <p className="text-xs text-red-400 mt-1">{errors.message}</p>}
             </div>
@@ -446,7 +443,7 @@ export default function Portfolio() {
               className={`sm:col-span-2 mt-1 inline-flex items-center justify-center gap-2 rounded-2xl px-5 py-3 font-medium ${T.accentGrad} text-white hover:opacity-95 transition ${T.soft} disabled:opacity-60`}
             >
               <Rocket className="h-4 w-4" />
-              {sending ? "Wysyłanie…" : "Wyślij zapytanie"}
+              {sending ? "Wysyłanie…" : "Wyślij zgłoszenie"}
             </button>
           </form>
         </div>
