@@ -1,14 +1,16 @@
-// src/app/api/contact/email.ts
+/**
+ * Email Templates for pmdev.ovh
+ * Principles: English-only comments, Safe escaping, Brand-aligned UI.
+ */
+
 import type { ContactPayload } from "@/types/contact";
 
-/**
- * Brand settings (override via ENV).
- */
-const BRAND_NAME = process.env.BRAND_NAME ?? "PMDev — Software";
+const BRAND_NAME = "pmdev";
 const SITE_URL = process.env.SITE_URL ?? "https://pmdev.ovh";
-const BRAND_COLOR = process.env.BRAND_COLOR ?? "#f1c40f";
+const ACCENT_COLOR = "#fbbf24"; // Amber Gold
+const BG_DARK = "#020617"; // Slate 950
 
-/** Basic HTML escaping to prevent injection. */
+/** Simple HTML escaping to prevent XSS in email clients */
 export function escapeHtml(s: string): string {
   return s.replace(/[&<>"']/g, ch => {
     const map: Record<string, string> = {
@@ -22,7 +24,7 @@ export function escapeHtml(s: string): string {
   });
 }
 
-/** Human friendly date for business timezone. */
+/** Professional date formatting for the administrator */
 export function formatDate(d: Date = new Date()): string {
   return new Intl.DateTimeFormat("pl-PL", {
     dateStyle: "long",
@@ -31,108 +33,72 @@ export function formatDate(d: Date = new Date()): string {
   }).format(d);
 }
 
-/** Plain-text fallback (deliverability). */
+/** Plain-text fallback for maximum deliverability */
 export function toPlainText({ name, email, subject, message }: ContactPayload): string {
   return [
-    `${BRAND_NAME} — New website inquiry`,
-    `(${formatDate()})`,
-    `==================================================`,
-    ``,
-    `CONTACT`,
-    `• Name:   ${name}`,
-    `• Email:  ${email}`,
-    `• Subject:${subject ? " " + subject : " (none)"}`,
-    ``,
-    `MESSAGE`,
-    `${message}`,
-    ``,
-    `HOW TO REPLY`,
-    `Use "Reply" — it will go to: ${email}`,
-    ``,
-    `—`,
-    `${BRAND_NAME} • ${SITE_URL}`,
+    `NEW INQUIRY - ${BRAND_NAME.toUpperCase()}`,
+    `Timestamp: ${formatDate()}`,
+    `------------------------------------------`,
+    `CLIENT DETAILS`,
+    `Name:    ${name}`,
+    `Email:   ${email}`,
+    `Subject: ${subject ?? "N/A"}`,
+    `------------------------------------------`,
+    `MESSAGE:`,
+    message,
+    `------------------------------------------`,
+    `Reply directly to: ${email}`,
   ].join("\n");
 }
 
-/** Brand-aligned HTML email (inline styles for email client compatibility). */
+/** Brand-aligned HTML template with professional styling */
 export function toHtml({ name, email, subject, message }: ContactPayload): string {
   const safe = {
     name: escapeHtml(name),
     email: escapeHtml(email),
-    subject: subject ? escapeHtml(subject) : "(none)",
+    subject: subject ? escapeHtml(subject) : "New Project Inquiry",
     message: escapeHtml(message).replace(/\n/g, "<br/>"),
   };
 
-  const logoUrl = `${SITE_URL}/og.png`;
-  const siteHost = SITE_URL.replace(/^https?:\/\/(www\.)?/i, "");
-
-  return `<!doctype html>
-<html lang="en">
-<head>
-  <meta charSet="utf-8"/>
-  <meta name="viewport" content="width=device-width,initial-scale=1"/>
-  <title>${BRAND_NAME} — New inquiry</title>
-</head>
-<body style="margin:0;background:#0b1220;color:#e6e9ef;font-family:Inter,system-ui,Segoe UI,Roboto,Arial,sans-serif;">
-  <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="padding:24px 12px;">
-    <tr>
-      <td align="center">
-        <table role="presentation" width="640" cellspacing="0" cellpadding="0" style="width:100%;max-width:640px;background:#101826;border:1px solid #1f2937;border-radius:14px;overflow:hidden;">
-          <tr>
-            <td style="padding:20px 24px;border-bottom:1px solid #1f2937;">
-              <table role="presentation" width="100%">
-                <tr>
-                  <td style="vertical-align:middle;">
-                    <h1 style="margin:0;font-size:18px;line-height:1.4;color:${BRAND_COLOR};">${BRAND_NAME}</h1>
-                    <p style="margin:2px 0 0;font-size:12px;color:#9aa4b2;">New inquiry • ${formatDate()}</p>
-                  </td>
-                  <td align="right">
-                    <img src="${logoUrl}" alt="${BRAND_NAME}" width="56" height="56" style="display:block;border-radius:8px;object-fit:cover"/>
-                  </td>
-                </tr>
-              </table>
-            </td>
-          </tr>
-          <tr>
-            <td style="padding:20px 24px;">
-              <h2 style="margin:0 0 12px;font-size:16px;color:#e6e9ef;">Contact</h2>
-              <p style="margin:0 0 6px;font-size:14px;"><strong>Name:</strong> ${safe.name}</p>
-              <p style="margin:0 0 6px;font-size:14px;"><strong>Email:</strong> ${safe.email}</p>
-              <p style="margin:0 0 0;font-size:14px;"><strong>Subject:</strong> ${safe.subject}</p>
-            </td>
-          </tr>
-          <tr>
-            <td style="padding:0 24px 20px;">
-              <h2 style="margin:0 0 12px;font-size:16px;color:#e6e9ef;">Message</h2>
-              <div style="padding:14px 16px;background:#0b1220;border:1px solid #1f2937;border-radius:10px;font-size:14px;line-height:1.6;">
-                ${safe.message}
-              </div>
-            </td>
-          </tr>
-          <tr>
-            <td style="padding:14px 24px;border-top:1px solid #1f2937;color:#9aa4b2;font-size:12px;">
-              To reply, simply use <em>Reply</em> — it will go to <strong>${safe.email}</strong>.
-            </td>
-          </tr>
-          <tr>
-            <td style="padding:16px 24px;color:#9aa4b2;font-size:12px;">
-              <table role="presentation" width="100%">
-                <tr>
-                  <td style="vertical-align:middle;">
-                    <span style="opacity:.9">${BRAND_NAME}</span> • 
-                    <a href="${SITE_URL}" style="color:${BRAND_COLOR};text-decoration:none;">${siteHost}</a>
-                  </td>
-                  <td align="right" style="vertical-align:middle;">
-                    <span style="opacity:.7">This message was generated by the website contact form.</span>
-                  </td>
-                </tr>
-              </table>
-            </td>
-          </tr>
-        </table>
-      </td>
-    </tr>
-  </table>
-</body>
-</html>`;
+  return `
+    <!doctype html>
+    <html lang="en">
+    <head>
+      <meta charset="utf-8"/>
+      <style>
+        body { font-family: sans-serif; background-color: ${BG_DARK}; color: #f8fafc; margin: 0; padding: 40px 20px; }
+        .container { max-width: 600px; margin: 0 auto; background: #0f172a; border: 1px solid #1e293b; border-radius: 16px; overflow: hidden; }
+        .header { padding: 32px; border-bottom: 1px solid #1e293b; }
+        .content { padding: 32px; }
+        .footer { padding: 24px; background: #1e293b; font-size: 12px; color: #94a3b8; }
+        .label { font-size: 11px; text-transform: uppercase; letter-spacing: 0.1em; color: ${ACCENT_COLOR}; font-weight: bold; margin-bottom: 4px; }
+        .value { font-size: 15px; margin-bottom: 24px; color: #f1f5f9; }
+        .message-box { padding: 20px; background: ${BG_DARK}; border-radius: 12px; border-left: 4px solid ${ACCENT_COLOR}; line-height: 1.6; }
+        a { color: ${ACCENT_COLOR}; text-decoration: none; }
+      </style>
+    </head>
+    <body>
+      <div class="container">
+        <div class="header">
+          <div style="font-size: 24px; font-weight: bold; color: #fff;">pm<span style="color: ${ACCENT_COLOR}">dev</span></div>
+          <div style="font-size: 12px; color: #64748b; margin-top: 4px;">Incoming Digital Architecture Inquiry • ${formatDate()}</div>
+        </div>
+        <div class="content">
+          <div class="label">From</div>
+          <div class="value"><strong>${safe.name}</strong> (${safe.email})</div>
+          
+          <div class="label">Subject</div>
+          <div class="value">${safe.subject}</div>
+          
+          <div class="label">Message Content</div>
+          <div class="message-box">${safe.message}</div>
+        </div>
+        <div class="footer">
+          This is an automated notification from ${SITE_URL}. 
+          To respond, simply <strong>reply to this email</strong>.
+        </div>
+      </div>
+    </body>
+    </html>
+  `;
 }

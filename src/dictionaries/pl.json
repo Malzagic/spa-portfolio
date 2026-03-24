@@ -1,0 +1,15 @@
+{
+  "navigation": {
+    "services": "Usługi",
+    "projects": "Realizacje",
+    "process": "Proces",
+    "about": "O mnie",
+    "contact": "Kontakt"
+  },
+  "hero": {
+    "title": "Automatyzacja",
+    "highlight": "Google Workspace",
+    "suffix": "dla Twojej firmy.",
+    "subtitle": "Zamieniam chaos w Arkuszach Google w działające systemy CRM i raporty."
+  }
+}

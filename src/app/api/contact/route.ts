@@ -1,95 +1,74 @@
-// src/app/api/contact/route.ts
-import { NextResponse } from "next/server";
-import { Resend } from "resend";
-import { ContactSchema, type ContactPayload } from "@/types/contact";
-import { toHtml, toPlainText } from "./email";
-
 /**
- * Contact API (Resend)
- * - Returns 422 with per-field errors on validation fail
- * - Uses Reply-To; guards env; strips CR/LF from subject
+ * Contact API Route - GCP Elite Integration
+ * Features: Service Account Authentication, Server-side Validation, Rate Limiting.
+ * Standards: Secure, Optimal, English comments.
  */
 
-// Simple in-memory rate limiter
+import { NextResponse } from "next/server";
+import { google } from "googleapis";
+import { ContactSchema } from "@/types/contact";
+
+// In-memory rate limiting to prevent automated abuse (3 req / 60s)
 const rateLimit = new Map<string, { count: number; lastReset: number }>();
 
 export async function POST(req: Request) {
-  // 1. Rate Limiting
-  const ip = (req.headers.get("x-forwarded-for") ?? "127.0.0.1").split(",")[0];
+  const ip = req.headers.get("x-forwarded-for")?.split(",")[0] ?? "unknown";
   const now = Date.now();
-  const windowMs = 60 * 1000; // 1 minute
-  const limit = 3; // max 3 requests per minute per IP
 
-  const record = rateLimit.get(ip) ?? { count: 0, lastReset: now };
-
-  if (now - record.lastReset > windowMs) {
-    record.count = 0;
-    record.lastReset = now;
+  // 1. Rate Limiting Logic
+  const limitData = rateLimit.get(ip) ?? { count: 0, lastReset: now };
+  if (now - limitData.lastReset > 60000) {
+    limitData.count = 0;
+    limitData.lastReset = now;
   }
-
-  if (record.count >= limit) {
-    return NextResponse.json({ ok: false, error: "Too many requests" }, { status: 429 });
+  if (limitData.count >= 3) {
+    return NextResponse.json({ ok: false, error: "Rate limit exceeded. Try again in 60s." }, { status: 429 });
   }
-
-  record.count++;
-  rateLimit.set(ip, record);
-
-  // Env guard
-  if (!process.env.RESEND_API_KEY || !process.env.MAIL_FROM || !process.env.MAIL_TO) {
-    console.error("Missing env vars for contact form");
-    return NextResponse.json(
-      { ok: false, error: "Server misconfigured: missing RESEND_API_KEY / MAIL_FROM / MAIL_TO." },
-      { status: 500 },
-    );
-  }
-
-  const resend = new Resend(process.env.RESEND_API_KEY);
-
-  // Parse body
-  const json = await req.json().catch(() => null);
-  if (!json || typeof json !== "object") {
-    return NextResponse.json({ ok: false, error: "Malformed JSON" }, { status: 400 });
-  }
-
-  // Validate
-  const parsed = ContactSchema.safeParse(json);
-  if (!parsed.success) {
-    const { fieldErrors, formErrors } = parsed.error.flatten();
-    return NextResponse.json(
-      {
-        ok: false,
-        error: "Validation failed",
-        errors: {
-          name: fieldErrors.name?.[0] ?? null,
-          email: fieldErrors.email?.[0] ?? null,
-          subject: fieldErrors.subject?.[0] ?? null,
-          message: fieldErrors.message?.[0] ?? null,
-          _form: formErrors?.[0] ?? null,
-        },
-      },
-      { status: 422 },
-    );
-  }
-
-  const data = parsed.data as ContactPayload;
-
-  // Defensive subject normalization
-  const cleanSubject = data.subject?.replace(/[\r\n]/g, " ").slice(0, 120) ?? null;
-
-  const emailPayload = {
-    from: process.env.MAIL_FROM, // Checked above
-    to: process.env.MAIL_TO, // Checked above
-    replyTo: data.email, // reply goes to client
-    subject: cleanSubject ? `[PMDev.ovh] ${cleanSubject}` : "New inquiry",
-    html: toHtml(data),
-    text: toPlainText(data),
-  } as const;
+  rateLimit.set(ip, { ...limitData, count: limitData.count + 1 });
 
   try {
-    await resend.emails.send(emailPayload);
+    const body = await req.json();
+
+    // 2. Server-side Zod Validation (Secure)
+    const result = ContactSchema.safeParse(body);
+    if (!result.success) {
+      return NextResponse.json({ ok: false, errors: result.error.flatten().fieldErrors }, { status: 422 });
+    }
+
+    // 3. Google Cloud Authentication Setup
+    // Note: These env vars must be set after GCP subscription is active
+    const auth = new google.auth.GoogleAuth({
+      credentials: {
+        client_email: process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL,
+        private_key: process.env.GOOGLE_PRIVATE_KEY?.replace(/\\n/g, "\n"),
+      },
+      scopes: ["https://www.googleapis.com/auth/spreadsheets", "https://www.googleapis.com/auth/gmail.send"],
+    });
+
+    const sheets = google.sheets({ version: "v4", auth });
+
+    // 4. Data Injection into Google Sheets (The "CRM" part)
+    await sheets.spreadsheets.values.append({
+      spreadsheetId: process.env.GOOGLE_SHEET_ID,
+      range: "Sheet1!A:E",
+      valueInputOption: "USER_ENTERED",
+      requestBody: {
+        values: [
+          [
+            new Date().toISOString(),
+            result.data.name,
+            result.data.email,
+            result.data.subject || "No Subject",
+            result.data.message,
+          ],
+        ],
+      },
+    });
+
     return NextResponse.json({ ok: true });
   } catch (error) {
-    console.error("Contact form sending failed:", error);
-    return NextResponse.json({ ok: false, error: "Send failed" }, { status: 500 });
+    // Log the error for internal debugging, return a generic professional message
+    console.error("GCP API Error:", error);
+    return NextResponse.json({ ok: false, error: "Inquiry system temporarily unavailable." }, { status: 500 });
   }
 }

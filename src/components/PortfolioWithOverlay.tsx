@@ -1,20 +1,27 @@
 "use client";
 
+/**
+ * PortfolioWithOverlay Component
+ * Wraps the main Portfolio with a demo notice.
+ * Now synchronized with the global ThemeContext.
+ */
+
 import React from "react";
 import OverlayNotice from "@/components/OverlayNotice";
 import Portfolio from "@/components/Portfolio";
-import { THEMES } from "@/types/portfolio-theme";
 import { useSearchParams } from "next/navigation";
+import { useTheme } from "@/context/ThemeContext"; // Import our new hook
+import { I18nProps } from "@/types/i18n"; // Import our new types
 
-/**
- * Wrapper component for Portfolio that adds a temporary demo overlay on initial visit.
- * The overlay is remembered for a defined period (e.g., 14 days) using localStorage.
- * Query parameters allow disabling or resetting the overlay (`?no-overlay=1`, `?reset-overlay=1`).
- */
-export default function PortfolioWithOverlay() {
+export default function PortfolioWithOverlay({ dict, lang }: I18nProps) {
   const search = useSearchParams();
   const disable = search?.get("no-overlay") === "1";
-  const T = THEMES.darkGold;
+
+  // Get the active theme config (T) from global context
+  const { themeConfig: T } = useTheme();
+
+  // Safety check: If theme is not yet loaded (during SSR), don't render properties
+  if (!T) return null;
 
   return (
     <div className="relative">
@@ -22,23 +29,20 @@ export default function PortfolioWithOverlay() {
         <OverlayNotice
           open
           durationMs={7000}
-          // Remember user visit for 14 days (stored in localStorage)
-          remember={{ key: "overlay_demo_seen", storage: "local", ttlMs: 1000 * 60 * 60 * 24 * 14 }}
-          // Optional query params for control: disable or reset overlay
+          // Remember user visit for 14 days
+          remember={{
+            key: "overlay_demo_seen",
+            storage: "local",
+            ttlMs: 1000 * 60 * 60 * 24 * 14,
+          }}
           suppressParam="no-overlay"
           resetParam="reset-overlay"
-          theme={{
-            card: T.card,
-            accentGrad: T.accentGrad,
-            focusRing: "",
-            target: "min-w-6 min-h-6 inline-flex items-center justify-center",
-          }}
           title="This website is under construction"
           message="You are viewing a public demo. Some features may be limited."
           ctaLabel="View demo"
         />
       )}
-      <Portfolio />
+      <Portfolio dict={dict} lang={lang} />
     </div>
   );
 }

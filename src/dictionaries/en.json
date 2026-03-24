@@ -1,0 +1,15 @@
+{
+  "navigation": {
+    "services": "Services",
+    "projects": "Projects",
+    "process": "Process",
+    "about": "About",
+    "contact": "Contact"
+  },
+  "hero": {
+    "title": "Automate your",
+    "highlight": "Google Workspace",
+    "suffix": "Chaos.",
+    "subtitle": "I turn Google Sheets chaos into powerful CRM systems and automated reports."
+  }
+}
