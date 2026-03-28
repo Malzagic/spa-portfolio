@@ -1,7 +1,7 @@
 /**
- * Next.js Proxy (formerly Middleware)
- * Handles i18n routing and URL rewrites at the Edge.
- * Standards: Next.js 16.2+ "Proxy" convention.
+ * src/proxy.ts
+ * Standards: Next.js 16.2+ "Proxy" Convention.
+ * This replaces the deprecated middleware.ts.
  */
 
 import { NextResponse } from "next/server";
@@ -10,34 +10,34 @@ import type { NextRequest } from "next/server";
 const locales = ["pl", "en"];
 const defaultLocale = "pl";
 
+// EXPORT NAME: Must be 'proxy' for the new convention
 export function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
-  // Check if the current path already has a supported locale
+  // 1. Skip if it's a static file or internal Next.js path
+  if (pathname.startsWith("/_next") || pathname.includes(".") || pathname.startsWith("/api")) {
+    return NextResponse.next();
+  }
+
+  // 2. Check if locale is already present
   const pathnameHasLocale = locales.some(locale => pathname.startsWith(`/${locale}/`) || pathname === `/${locale}`);
 
   if (pathnameHasLocale) return NextResponse.next();
 
-  // Redirect to default locale if missing
-  request.nextUrl.pathname = `/${defaultLocale}${pathname}`;
+  // 3. Rewrite to default locale (Internal Proxying)
+  const url = request.nextUrl.clone();
+  url.pathname = `/${defaultLocale}${pathname}`;
 
-  // Use rewrite instead of redirect for better SEO (URL stays clean)
-  return NextResponse.rewrite(request.nextUrl);
+  return NextResponse.rewrite(url);
 }
 
 /**
  * Proxy Configuration
- * Excludes internal Next.js assets and public static files.
+ * Standard matcher for i18n routing.
  */
 export const config = {
   matcher: [
-    /*
-     * Match all request paths except for the ones starting with:
-     * - api (API routes)
-     * - _next/static (static files)
-     * - _next/image (image optimization files)
-     * - favicon.ico, favicon.svg, og-image.png, cv.pdf (static assets)
-     */
+    // Exclude static assets and api routes
     "/((?!api|_next/static|_next/image|favicon.ico|favicon.svg|og-image.png|cv.pdf).*)",
   ],
 };
