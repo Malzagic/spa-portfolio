@@ -29,10 +29,9 @@ import { FaLinkedin } from "react-icons/fa";
 import { I18nProps } from "@/types/i18n";
 
 import Section from "@/components/UI/Section";
-import TechTag from "@/components/TechTag";
-import { THEMES, type ThemeKey } from "@/types/portfolio-theme";
-import { ContactSchema, type ContactPayload } from "@/types/contact";
+import { TechTag } from "@/components/TechTag";
 import { useTheme } from "@/context/ThemeContext";
+import ThemePicker from "@/components/UI/ThemePicker";
 
 const fade: MotionProps = {
   initial: { opacity: 0, y: 15 },
@@ -98,21 +97,7 @@ export default function Portfolio({ dict, lang }: I18nProps) {
   return (
     <div className={`${T.page} transition-colors duration-500 selection:bg-white/10`}>
       {/* THEME SWITCHER */}
-      <div className="fixed bottom-6 right-6 z-50">
-        <select
-          aria-label="Change theme"
-          className={`appearance-none border border-white/10 rounded-full px-5 py-2.5 text-xs backdrop-blur-md focus:outline-none focus:ring-2 cursor-pointer shadow-2xl transition-all ${T.select} ${T.ring}`}
-          value={theme}
-          onChange={e => setTheme(e.target.value as ThemeKey)}
-        >
-          {Object.entries(THEMES).map(([k, v]) => (
-            <option key={k} value={k}>
-              {v.name}
-            </option>
-          ))}
-        </select>
-      </div>
-
+      <ThemePicker />
       {/* HERO SECTION */}
       <section id="home" className="relative py-20 md:py-32 overflow-hidden">
         <div className={`pointer-events-none absolute inset-0 -z-10 blur-3xl opacity-30 ${T.accentGrad}`} />
@@ -186,7 +171,6 @@ export default function Portfolio({ dict, lang }: I18nProps) {
           </motion.div>
         </div>
       </section>
-
       {/* SERVICES */}
       <Section
         id="services"
@@ -214,7 +198,6 @@ export default function Portfolio({ dict, lang }: I18nProps) {
           />
         </div>
       </Section>
-
       {/* PROJECTS */}
       <Section
         id="projects"
@@ -248,7 +231,6 @@ export default function Portfolio({ dict, lang }: I18nProps) {
           />
         </div>
       </Section>
-
       {/* PROCESS */}
       <Section id="process" title="Jak pracuję" subtitle="Prosty proces wdrożenia automatyzacji w Twojej firmie.">
         <ol className="grid md:grid-cols-5 gap-6">
@@ -273,102 +255,76 @@ export default function Portfolio({ dict, lang }: I18nProps) {
           ))}
         </ol>
       </Section>
-
-      {/* ABOUT */}
-      <Section id="about" title="O mnie" subtitle="Programista Google Workspace & Full-stack Developer.">
+      {/* ABOUT SECTION */}
+      <Section id="about" title="O mnie" subtitle="Digital Architect | MERN Stack & Google Workspace Expert">
         <div className={`rounded-3xl p-8 border border-white/5 ${T.card}`}>
-          <div className="grid md:grid-cols-3 gap-8">
-            <div className="md:col-span-2 space-y-6">
-              <p className="opacity-90 leading-relaxed">
-                Specjalizuję się w automatyzacji procesów dla firm. Zamiast skomplikowanych systemów, buduję lekkie
-                narzędzia oparte o Google Workspace. Moje rozwiązania działają w tle, oszczędzając Twój czas.
-              </p>
-              <div className="flex flex-wrap gap-2">
-                {["Google Apps Script", "Next.js", "TypeScript", "Integrations"].map(t => (
-                  <TechTag key={t} label={t} />
-                ))}
+          <div className="grid md:grid-cols-3 gap-12">
+            {/* Left & Middle: Narrative and Tech Stack */}
+            <div className="md:col-span-2 space-y-8">
+              <div className="space-y-4">
+                <p className="opacity-90 leading-relaxed text-lg">
+                  Łączę świat nowoczesnych aplikacji webowych z potęgą automatyzacji biznesowej. Jako{" "}
+                  <span className={T.accentText}>Digital Architect</span>, nie tylko buduję software, ale projektuję
+                  ekosystemy, które eliminują powtarzalną pracę.
+                </p>
+                <p className="opacity-70 leading-relaxed">
+                  Specjalizuję się w stacku **MERN** (MongoDB, Express, React, Node.js) oraz infrastrukturze **Google
+                  Cloud (GCP/Firebase)**. Moim unikalnym atutem jest głęboka integracja tych rozwiązań z ekosystemem
+                  Google Workspace, co pozwala na tworzenie narzędzi klasy Enterprise w lekkiej formie.
+                </p>
+              </div>
+
+              {/* Tech Stack Grouping */}
+              <div className="space-y-4">
+                <h4 className="text-xs font-mono uppercase tracking-[0.2em] opacity-40">Core Stack & Cloud</h4>
+                <div className="flex flex-wrap gap-2">
+                  {[
+                    "JavaScript (ES6+)",
+                    "TypeScript",
+                    "React.js",
+                    "Node.js",
+                    "Express",
+                    "MongoDB",
+                    "Firebase",
+                    "Google Cloud (GCP)",
+                    "Google Apps Script",
+                    "Next.js",
+                    "REST APIs",
+                  ].map(t => (
+                    <TechTag key={t} label={t} />
+                  ))}
+                </div>
               </div>
             </div>
-            <div className="space-y-3 border-l border-white/10 pl-8 text-sm opacity-80">
-              <div className="flex items-center gap-3">
-                <LuCheck className={T.accentText} /> Faktura B2B
-              </div>
-              <div className="flex items-center gap-3">
-                <LuCheck className={T.accentText} /> Gwarancja na kod
-              </div>
-              <div className="flex items-center gap-3">
-                <LuCheck className={T.accentText} /> Szybka realizacja
-              </div>
-              <div className="mt-6">
-                <a href="/cv.pdf" className={`underline font-medium ${T.link}`}>
-                  Pobierz CV (PDF)
-                </a>
+
+            {/* Right Column: Trust & Business Details */}
+            <div className="space-y-6 md:border-l md:border-white/10 md:pl-8">
+              <div className="space-y-4 text-sm opacity-80">
+                <div className="flex items-center gap-3">
+                  <LuCheck className={T.accentText} />
+                  <span>Pełny cykl **MERN Development**</span>
+                </div>
+                <div className="flex items-center gap-3">
+                  <LuCheck className={T.accentText} />
+                  <span>Architektura **Serverless (GCP)**</span>
+                </div>
+                <div className="flex items-center gap-3">
+                  <LuCheck className={T.accentText} />
+                  <span>Faktura B2B (Polska/EU)</span>
+                </div>
+                <div className="flex items-center gap-3">
+                  <LuCheck className={T.accentText} />
+                  <span>Gwarancja & Kod najwyższej jakości</span>
+                </div>
               </div>
             </div>
           </div>
         </div>
       </Section>
-
-      {/* CONTACT */}
-      {/* <Section id="contact" title="Kontakt" subtitle="Napisz, co chcesz zautomatyzować — wrócę z pomysłem w 48h.">
-        <div className={`rounded-3xl p-8 grid md:grid-cols-3 gap-12 border border-white/10 ${T.card}`}>
-          <div className="space-y-6">
-            <a className={`flex items-center gap-3 text-lg font-medium ${T.link}`} href="mailto:pm@pmdev.ovh">
-              <LuMail className="text-xl" /> pm@pmdev.ovh
-            </a>
-            <div className="text-sm opacity-60 space-y-1">
-              <p>Lokalizacja: Polska (PL) / Remote (EU)</p>
-              <p>Timezone: CET (UTC+1)</p>
-            </div>
-          </div>
-
-          <form onSubmit={onSubmit} className="md:col-span-2 grid grid-cols-1 sm:grid-cols-2 gap-4" noValidate>
-            <div className="space-y-1">
-              <input
-                name="name"
-                className={`w-full px-4 py-3 rounded-xl bg-black/20 border border-white/10 focus:outline-none focus:ring-2 ${T.ring}`}
-                placeholder="Imię"
-              />
-              {errors.name && <p className="text-xs text-red-400">{errors.name}</p>}
-            </div>
-            <div className="space-y-1">
-              <input
-                name="email"
-                type="email"
-                className={`w-full px-4 py-3 rounded-xl bg-black/20 border border-white/10 focus:outline-none focus:ring-2 ${T.ring}`}
-                placeholder="Email"
-              />
-              {errors.email && <p className="text-xs text-red-400">{errors.email}</p>}
-            </div>
-            <div className="sm:col-span-2 space-y-1">
-              <textarea
-                name="message"
-                rows={5}
-                className={`w-full px-4 py-3 rounded-xl bg-black/20 border border-white/10 focus:outline-none focus:ring-2 ${T.ring}`}
-                placeholder="Opisz proces do usprawnienia..."
-              />
-              {errors.message && <p className="text-xs text-red-400">{errors.message}</p>}
-            </div>
-            <button
-              type="submit"
-              disabled={sending}
-              className={`sm:col-span-2 py-4 text-white font-bold rounded-xl transition-all flex items-center justify-center gap-2 ${T.accentGrad} ${T.soft} disabled:opacity-50`}
-            >
-              {sending ? (
-                "Wysyłanie..."
-              ) : (
-                <>
-                  <LuSend /> Wyślij zgłoszenie
-                </>
-              )}
-            </button>
-          </form>
-        </div>
-      </Section> */}
       {/* CONTACT SECTION */}
       <Section id="contact" title="Kontakt" subtitle="Napisz, co chcesz zautomatyzować — wrócę z pomysłem w 48h.">
         <div className={`rounded-3xl p-8 grid md:grid-cols-3 gap-12 border border-white/10 ${T.card}`}>
-          {/* Left Column: Contact Info */}
+          {/* Left Column: Static Contact Info */}
           <div className="space-y-6">
             <a className={`flex items-center gap-3 text-lg font-medium ${T.link}`} href="mailto:pm@pmdev.ovh">
               <LuMail className="text-xl" /> pm@pmdev.ovh
@@ -379,36 +335,49 @@ export default function Portfolio({ dict, lang }: I18nProps) {
             </div>
           </div>
 
-          {/* Right Column: Form with Maintenance Logic */}
+          {/* Right Column: Dynamic Form Logic */}
           <div className="md:col-span-2 relative">
-            {/* MAINTENANCE OVERLAY INFO */}
-            {/* Set isBackendReady to 'true' once GCP integration is complete */}
             {(() => {
+              // Maintenance Flag: Toggle to 'true' once Google Cloud Platform is connected
+              const isBackendReady = false;
+
+              // Dynamic Alert Styling based on current theme T
+              const accentBase = T.accentText; // e.g., 'text-amber-400'
+              const accentBg = accentBase.replace("text-", "bg-") + "/10";
+              const accentBorder = accentBase.replace("text-", "border-") + "/20";
+              const pulseColor = accentBase.replace("text-", "bg-");
+
               return (
                 <>
+                  {/* THEMED MAINTENANCE ALERT */}
                   {!isBackendReady && (
-                    <div className="mb-6 p-4 rounded-xl bg-amber-500/10 border border-amber-500/20 flex items-center gap-4 animate-in fade-in slide-in-from-top-2 duration-700">
-                      <div className="h-2 w-2 rounded-full bg-amber-500 animate-pulse shadow-[0_0_10px_#fbbf24]" />
-                      <p className="text-xs font-medium text-amber-200/80 tracking-wide uppercase italic">
-                        Status: <span className="text-amber-400">Trwają prace nad integracją GCP</span> – Zapraszam do
-                        kontaktu mailowego.
+                    <div
+                      className={`mb-6 p-4 rounded-xl border flex items-center gap-4 animate-in fade-in slide-in-from-top-2 duration-700 ${accentBg} ${accentBorder}`}
+                    >
+                      <div
+                        className={`h-2 w-2 rounded-full animate-pulse shadow-[0_0_10px_currentColor] ${pulseColor}`}
+                      />
+                      <p className={`text-xs font-medium tracking-wide uppercase italic ${accentBase}`}>
+                        Status: <span className="opacity-80">Trwają prace nad integracją GCP</span> –
+                        <span className="ml-1 opacity-100 font-bold">Zapraszam do kontaktu mailowego.</span>
                       </p>
                     </div>
                   )}
 
+                  {/* RESPONSIVE CONTACT FORM */}
                   <form
                     onSubmit={onSubmit}
-                    className={`grid grid-cols-1 sm:grid-cols-2 gap-4 transition-opacity duration-500 ${!isBackendReady ? "opacity-60" : "opacity-100"}`}
+                    className={`grid grid-cols-1 sm:grid-cols-2 gap-4 transition-all duration-500 ${!isBackendReady ? "opacity-60 grayscale-[0.5]" : "opacity-100"}`}
                     noValidate
                   >
-                    {/* Name Input */}
+                    {/* Name Input - Mobile-first grid (1 col by default, 2 cols on sm+) */}
                     <div className="space-y-1">
                       <input
                         name="name"
                         disabled={!isBackendReady}
                         className={`w-full px-4 py-3 rounded-xl bg-black/20 border border-white/10 focus:outline-none focus:ring-2 ${T.ring} transition-all
-                    ${!isBackendReady ? "cursor-not-allowed grayscale" : "hover:border-white/20"}`}
-                        placeholder={isBackendReady ? "Imię" : "Formularz czasowo wyłączony"}
+                    ${!isBackendReady ? "cursor-not-allowed" : "hover:border-white/20"}`}
+                        placeholder={isBackendReady ? "Imię" : "Formularz offline"}
                       />
                       {errors.name && <p className="text-xs text-red-400">{errors.name}</p>}
                     </div>
@@ -420,24 +389,22 @@ export default function Portfolio({ dict, lang }: I18nProps) {
                         type="email"
                         disabled={!isBackendReady}
                         className={`w-full px-4 py-3 rounded-xl bg-black/20 border border-white/10 focus:outline-none focus:ring-2 ${T.ring} transition-all
-                    ${!isBackendReady ? "cursor-not-allowed grayscale" : "hover:border-white/20"}`}
+                    ${!isBackendReady ? "cursor-not-allowed" : "hover:border-white/20"}`}
                         placeholder="Email"
                       />
                       {errors.email && <p className="text-xs text-red-400">{errors.email}</p>}
                     </div>
 
-                    {/* Message Textarea */}
+                    {/* Message Textarea - Always full width in the form grid */}
                     <div className="sm:col-span-2 space-y-1">
                       <textarea
                         name="message"
                         disabled={!isBackendReady}
                         rows={5}
                         className={`w-full px-4 py-3 rounded-xl bg-black/20 border border-white/10 focus:outline-none focus:ring-2 ${T.ring} transition-all resize-none
-                    ${!isBackendReady ? "cursor-not-allowed grayscale" : "hover:border-white/20"}`}
+                    ${!isBackendReady ? "cursor-not-allowed" : "hover:border-white/20"}`}
                         placeholder={
-                          isBackendReady
-                            ? "Opisz proces do usprawnienia..."
-                            : "Pracujemy nad bezpiecznym połączeniem z Google Cloud..."
+                          isBackendReady ? "Opisz proces do usprawnienia..." : "System w trakcie konfiguracji..."
                         }
                       />
                       {errors.message && <p className="text-xs text-red-400">{errors.message}</p>}
@@ -448,7 +415,11 @@ export default function Portfolio({ dict, lang }: I18nProps) {
                       type="submit"
                       disabled={!isBackendReady || sending}
                       className={`sm:col-span-2 py-4 text-white font-bold rounded-xl transition-all flex items-center justify-center gap-2 
-                  ${isBackendReady ? `${T.accentGrad} ${T.soft} active:scale-95` : "bg-zinc-800 text-zinc-500 cursor-not-allowed"}`}
+                  ${
+                    isBackendReady
+                      ? `${T.accentGrad} ${T.soft} active:scale-95 cursor-pointer`
+                      : "bg-zinc-800 text-zinc-500 cursor-not-allowed opacity-50"
+                  }`}
                     >
                       {sending ? (
                         "Wysyłanie..."
@@ -467,7 +438,6 @@ export default function Portfolio({ dict, lang }: I18nProps) {
           </div>
         </div>
       </Section>
-
       <footer className="py-12 border-t border-white/5 opacity-40 text-center text-xs">
         <p>© {new Date().getFullYear()} pmdev · Digital Architect · built with Next.js 16.2</p>
       </footer>
@@ -551,11 +521,11 @@ function ProjectCard({
           <span className="opacity-70">{problem}</span>
         </p>
         <p>
-          <span className={`${theme.accentText} font-bold`}>Solution:</span>{" "}
+          <span className={`${theme.accentText} font-bold`}>Rozwiązanie:</span>{" "}
           <span className="opacity-70">{solution}</span>
         </p>
         <p>
-          <span className={`${theme.accentText} font-bold`}>Result:</span>{" "}
+          <span className={`${theme.accentText} font-bold`}>Rezultat:</span>{" "}
           <span className="opacity-90 font-bold">{result}</span>
         </p>
       </div>

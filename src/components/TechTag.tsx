@@ -1,9 +1,11 @@
-// src/components/TechTag.tsx
-"use client";
+/**
+ * TechTag Component
+ * Uses theme-aware 'tag' property for consistent borders and backgrounds.
+ */
+import { useTheme } from "@/context/ThemeContext";
 
-import * as React from "react";
+export const TechTag = ({ label }: { label: string }) => {
+  const { themeConfig: T } = useTheme();
 
-/** Small reusable technology badge. */
-export default function TechTag({ label }: { label: string }) {
-  return <span className="px-2.5 py-1 rounded-full border border-white/10 bg-white/5 text-xs">{label}</span>;
-}
+  return <span className={`px-3 py-1 text-xs font-mono rounded-full border transition-all ${T.tag}`}>{label}</span>;
+};

@@ -2,8 +2,8 @@
 
 /**
  * OverlayNotice Component - Professional Entry Gate
- * Handles demo-mode notifications with persistence and accessibility.
- * Principles: English-only UI/Comments, Context-integrated, A11y compliant.
+ * Standards: Next.js 16.2 Client Component, Theme-aware logic.
+ * Principles: English-only UI/Comments, Professional UX, Accessibility.
  */
 
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
@@ -40,10 +40,12 @@ export default function OverlayNotice({
   resetParam = "reset-overlay",
 }: OverlayNoticeProps) {
   const [visible, setVisible] = useState(false);
-  const { themeConfig: T } = useTheme();
+  const { themeConfig: T, theme } = useTheme();
   const buttonRef = useRef<HTMLButtonElement | null>(null);
 
-  // Detect URL overrides for development/debugging
+  const isLight = theme === "lightClean";
+
+  // URL override detection for bypass/reset
   const params = useMemo(() => {
     if (typeof window === "undefined") return null;
     return new URLSearchParams(window.location.search);
@@ -53,8 +55,8 @@ export default function OverlayNotice({
   const isResetForced = params?.get(resetParam) === "1";
 
   /**
-   * Initialization logic
-   * Checks persistence and URL flags to determine visibility
+   * Visibility Logic
+   * Handles persistence checks and force-resets.
    */
   useEffect(() => {
     if (!open || typeof window === "undefined") return;
@@ -90,14 +92,14 @@ export default function OverlayNotice({
     onClose?.();
   }, [remember, onClose]);
 
-  // Auto-dismiss logic
+  // Auto-dismiss management
   useEffect(() => {
     if (!visible || durationMs <= 0) return;
     const timer = setTimeout(handleClose, durationMs);
     return () => clearTimeout(timer);
   }, [visible, durationMs, handleClose]);
 
-  // Accessibility: Focus management
+  // Accessibility: Focus management for screen readers and keyboard users
   useEffect(() => {
     if (visible) {
       const raf = requestAnimationFrame(() => buttonRef.current?.focus());
@@ -116,39 +118,52 @@ export default function OverlayNotice({
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
         >
-          {/* Backdrop with Glassmorphism */}
-          <div className="absolute inset-0 bg-slate-950/60 backdrop-blur-sm" onClick={handleClose} />
+          {/* Theme-aware Backdrop */}
+          <div
+            className={`absolute inset-0 backdrop-blur-md transition-colors duration-500
+              ${isLight ? "bg-white/40" : "bg-black/80"}`}
+            onClick={handleClose}
+          />
 
           {/* Modal Panel */}
           <motion.div
-            className={`relative w-full max-w-lg rounded-3xl p-8 overflow-hidden border border-white/10 ${T.card}`}
-            initial={{ scale: 0.95, y: 10, opacity: 0 }}
+            className={`relative w-full max-w-lg rounded-[2.5rem] p-10 overflow-hidden shadow-2xl border ${T.card} ${T.soft}`}
+            initial={{ scale: 0.9, y: 20, opacity: 0 }}
             animate={{ scale: 1, y: 0, opacity: 1 }}
-            exit={{ scale: 0.95, y: 10, opacity: 0 }}
-            transition={{ type: "spring", damping: 25, stiffness: 300 }}
+            exit={{ scale: 0.9, y: 20, opacity: 0 }}
+            transition={{ type: "spring", damping: 25, stiffness: 400 }}
           >
-            {/* Theme-driven accent glow */}
+            {/* Dynamic Ambient Glow */}
             <div
-              className={`absolute -top-24 -left-24 h-48 w-48 rounded-full blur-[80px] opacity-20 ${T.accentGrad}`}
+              className={`absolute -top-32 -left-32 h-64 w-64 rounded-full blur-[100px] opacity-20 transition-colors duration-700 ${T.accentGrad}`}
             />
 
             <div className="relative z-10">
-              <h2 className="text-2xl font-bold tracking-tight text-white mb-3">{title}</h2>
-              <p className="text-slate-400 leading-relaxed mb-8">{message}</p>
+              <h2 className={`text-3xl font-bold tracking-tighter mb-4 ${isLight ? "text-zinc-900" : "text-white"}`}>
+                {title}
+              </h2>
+              <p
+                className={`text-base leading-relaxed mb-10 font-medium opacity-60 ${isLight ? "text-zinc-800" : "text-zinc-300"}`}
+              >
+                {message}
+              </p>
 
               <div className="flex flex-col sm:flex-row gap-4">
+                {/* CTA - Primary Button */}
                 <button
                   ref={buttonRef}
                   onClick={handleClose}
-                  className={`flex-1 rounded-2xl py-4 font-bold text-white transition-all active:scale-95 shadow-lg ${T.accentGrad} ${T.soft}`}
+                  className={`flex-1 rounded-2xl py-4 font-bold text-white transition-all active:scale-95 shadow-lg ${T.accentGrad}`}
                 >
                   {ctaLabel}
                 </button>
+
+                {/* Secondary Button */}
                 <button
                   onClick={handleClose}
-                  className="flex-1 rounded-2xl py-4 font-bold text-slate-400 hover:text-white hover:bg-white/5 transition-all"
+                  className={`flex-1 rounded-2xl py-4 font-bold transition-all hover:bg-white/5 ${T.link} ${isLight ? "text-zinc-500" : "text-zinc-400"}`}
                 >
-                  Close
+                  Skip
                 </button>
               </div>
             </div>
@@ -159,14 +174,14 @@ export default function OverlayNotice({
   );
 }
 
-/** * Storage Utilities
+/** * Storage Utilities - Encapsulated Logic
  */
 function safeSet(store: Storage, key: string, ttlMs?: number) {
   try {
     const exp = ttlMs ? Date.now() + ttlMs : undefined;
     store.setItem(key, JSON.stringify({ exp }));
   } catch (e) {
-    console.error("Storage write failed", e);
+    console.error("[STORAGE] Write failed:", e);
   }
 }
 
